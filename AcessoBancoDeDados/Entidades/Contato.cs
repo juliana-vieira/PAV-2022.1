@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using AcessoBancoDados.Dados;
+using AcessoBancoDados.Persistencia;
 using MySql.Data.MySqlClient;
 
 namespace AcessoBancoDados.Entidades
@@ -23,18 +23,23 @@ namespace AcessoBancoDados.Entidades
 
         public override void transferirDados(MySqlCommand comandosql)
         {
-            comandosql.Attributes.SetAttribute(ATRIBUTO_ID_CONTATO, idContato);
-            comandosql.Attributes.SetAttribute(ATRIBUTO_NOME, nome);
-            comandosql.Attributes.SetAttribute(ATRIBUTO_EMAIL, email);
-            comandosql.Attributes.SetAttribute(ATRIBUTO_TELEFONE, telefone);
+            comandosql.Parameters[ATRIBUTO_ID_CONTATO].Value = idContato;
+            comandosql.Parameters[ATRIBUTO_NOME].Value = nome;
+            comandosql.Parameters[ATRIBUTO_EMAIL].Value = email;
+            comandosql.Parameters[ATRIBUTO_TELEFONE].Value = telefone;
         }
 
-        public override void lerDados(MySqlCommand comandosql)
+        public override void transferirDadosIdentificador(MySqlCommand comandosql)
         {
-            idContato = int.Parse(comandosql.Attributes[0].Value.ToString());
-            nome = comandosql.Attributes[1].Value.ToString();
-            email = comandosql.Attributes[2].Value.ToString();
-            telefone = comandosql.Attributes[3].Value.ToString();
+            comandosql.Parameters[ATRIBUTO_ID_CONTATO].Value = idContato;
+        }
+
+        public override void lerDados(MySqlDataReader leitorDados)
+        {
+            idContato = int.Parse(leitorDados[ATRIBUTO_ID_CONTATO].ToString());
+            nome = leitorDados[ATRIBUTO_NOME].ToString();
+            email = leitorDados[ATRIBUTO_EMAIL].ToString();
+            telefone = leitorDados[ATRIBUTO_TELEFONE].ToString();
         }
 
         public string getNome()

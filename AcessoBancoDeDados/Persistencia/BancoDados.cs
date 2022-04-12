@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
-namespace AcessoBancoDados.Dados
+namespace AcessoBancoDados.Persistencia
 {
     public class BancoDados
     {
@@ -14,6 +14,7 @@ namespace AcessoBancoDados.Dados
         private string servidor = "localhost";
         private string nomeBD = "bd_contato";
         private MySqlConnection conexao;
+        private MySqlTransaction transacao;
         private static BancoDados instancia = null; // para o singleton
 
 
@@ -68,6 +69,29 @@ namespace AcessoBancoDados.Dados
             }
 
             return instancia;
+        }
+
+        public void iniciarTransacao()
+        {
+            transacao = conexao.BeginTransaction();
+        }
+
+        public void confirmarTransacao()
+        {
+            if (transacao != null)
+            {
+                transacao.Commit();
+                transacao.Dispose();
+            }
+        }
+
+        public void cancelarTransacao()
+        {
+            if (transacao != null)
+            {
+                transacao.Rollback();
+                transacao.Dispose();
+            }
         }
     }
 }
